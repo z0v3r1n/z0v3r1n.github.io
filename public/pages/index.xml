@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pages on z0v3r1n @br34ktypeshyt</title>
+    <link>http://localhost:1313/pages/</link>
+    <description>Recent content in Pages on z0v3r1n @br34ktypeshyt</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="http://localhost:1313/pages/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>http://localhost:1313/pages/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/pages/about/</guid>
+      
+      <description> Offensive security researcher. I h3ck things for fun and learn full-time. Bio Data 16 year old March 17, 2009 Islamabad, Pakistan Achievements Founder of PentSec Ranked 20th in Pakistan on HTB Contacts Discord: z0v3r1n Email: zoverin@proton.me GitHub Twitter LinkedIn Instagram </description>
+      
+    </item>
+    
+  </channel>
+</rss>

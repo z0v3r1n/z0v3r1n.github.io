@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on z0v3r1n @br34ktypeshyt</title>
+    <link>http://localhost:1313/posts/</link>
+    <description>Recent content in Posts on z0v3r1n @br34ktypeshyt</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 20 Aug 2024 00:00:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>FFuF Cheatsheet</title>
+      <link>http://localhost:1313/posts/ffuf-cheatsheet/</link>
+      <pubDate>Tue, 20 Aug 2024 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/posts/ffuf-cheatsheet/</guid>
+      
+      <description>FFUF, or “Fuzz Faster you Fool” is an open source web fuzzing tool, intended for discovering elements and content within web applications, or web servers.
+Fuzzing Subdomain/VHost Wordlists ========= - /opt/useful/SecLists/Discovery/DNS/subdomains-top1million-5000.txt $ ffuf -w &amp;lt;wordlist&amp;gt;:FUZZ -u https://FUZZ.&amp;lt;SERVER_IP&amp;gt;:&amp;lt;PORT&amp;gt;/ -ac $ ffuf -w &amp;lt;wordlist&amp;gt;:FUZZ -u https://&amp;lt;SERVER_IP&amp;gt;:&amp;lt;PORT&amp;gt;/ -H &amp;#34;Host: FUZZ.&amp;lt;domain&amp;gt;&amp;#34; Don&amp;rsquo;t forget to add subdomains/vhosts to /etc/hosts
+$ echo &amp;#34;SERVER_IP DNS_NAME&amp;#34; | sudo tee -a /etc/hosts Extension Wordlists ========= - /opt/useful/SecLists/Discovery/Web-Content/web-extensions.txt $ ffuf -w &amp;lt;wordlist&amp;gt;:FUZZ -u http://&amp;lt;SERVER_IP&amp;gt;:&amp;lt;PORT&amp;gt;/indexFUZZ -ac To specify the extension type to append to every word in the wordlist, use the -e switch.</description>
+      
+    </item>
+    
+  </channel>
+</rss>

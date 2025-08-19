@@ -1,0 +1,64 @@
+baseURL = 'https://z0v3r1n.github.io/'
+languageCode = 'en-us'
+defaultContentLanguage = "en-us"
+enableEmoji = true
+title = 'z0v3r1n @br34ktypeshyt'
+params.description = 'Log of me yapping bout what I learned'
+theme = 'hugo-blog-awesome'
+goToTop = true
+
+[markup]
+[markup.highlight]
+noClasses = false
+[markup.goldmark.renderer]
+unsafe = true
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 4
+ordered = false
+
+[Languages.en-us.menu]
+[[Languages.en-us.menu.main]]
+pageRef = "/"
+name = 'Home'
+url = '/'
+weight = 10
+
+[[Languages.en-us.menu.main]]
+pageRef = "posts"
+name = 'Posts'
+url = '/posts/'
+weight = 20
+
+[[Languages.en-us.menu.main]]
+pageRef = "about"
+name = 'About'
+url = '/about/'
+weight = 30
+
+[Languages.en-us.params]
+sitename = ""
+defaultColor = "dark"
+description = "offensive security research"
+mainSections = ['posts']
+goToTop = true
+dateFormat = ""
+rssFeedDescription = "summary"
+
+[Languages.en-us.params.author]
+#avatar = "avatar.jpg"                       # /assets/avatar.jpg
+intro = "z0v3r1n's logbook"
+description = "offensive security research"
+name = ""
+
+[[params.socialIcons]]
+name = "github"
+url = "https://github.com/z0v3r1n"
+
+[[params.socialIcons]]
+name = "x"
+url = "https://x.com/z0v3r1n"
+
+[[params.socialIcons]]
+name = "linkedin"
+url = "https://www.linkedin.com/in/z0v3r1n/"
