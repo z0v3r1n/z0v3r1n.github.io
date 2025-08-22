@@ -1,10 +1,10 @@
 ---
-title: Flagyard'25 muted_shell (pwn, easy)
+title: Flagyard — muted_shell (pwn, easy)
 date: 2025-08-22
 toc: true
 ---
 
-<img width="1479" height="376" alt="image" src="https://github.com/user-attachments/assets/558c779d-ccdc-4848-bc44-33c27992dbba" />
+![](https://github.com/user-attachments/assets/558c779d-ccdc-4848-bc44-33c27992dbba)
 
 ## muted_shell: the binary
 Let's take a look at the binary:
