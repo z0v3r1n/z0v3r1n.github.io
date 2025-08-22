@@ -1,9 +1,12 @@
 ---
-title: flagyard - muted_shell (pwn, easy)
+title: Flagyard: muted_shell (pwn, easy)
 date: 2025-08-22
 toc: true
 ---
 
+<img width="1479" height="376" alt="image" src="https://github.com/user-attachments/assets/558c779d-ccdc-4848-bc44-33c27992dbba" />
+
+## muted_shell: the binary
 Let's take a look at the binary:
 
 ```bash
@@ -68,7 +71,7 @@ bool main(void)
  `main()` function opens the flag file in read mode. Then it allocates memory with mmap() and stores shellcode there. It reads up to 0x100 bytes from stdin into the buffer. Then, seccomp is installed and our shellcode is executed. 
 
 ### can u read something without opening it?
- As we know that `main()` func opens flag file in read mode and does not store the file descriptor returned by `open()`. Then how would we read the flag? 
+ As, we know that `main()` function opens flag file in read mode and does not store the file descriptor returned by `open()`. Then how would we read the flag? 
  Hint suggests something about reading something without opening it. So, I researched how `open()` works. The file descriptor is not stored? No worries. Since `stdin = 0`, `stdout = 1`, `stderr = 2` are already taken, the kernel assigns the next free file descriptor, which is 3.
  So, we have to read the flag from the file descriptor 3.
 
@@ -174,7 +177,7 @@ $
 [*] Got EOF while sending in interactive
 ```
 
-To exploit a remote instance, replace process("./muted_shell") with:
+To exploit a remote instance, replace `process("./muted_shell")` with:
 ```python
 p = remote("IP_ADDRESS", PORT)
 ```
