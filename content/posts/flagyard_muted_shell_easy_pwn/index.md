@@ -1,5 +1,5 @@
 ---
-title: Flagyard: muted_shell (pwn, easy)
+title: Flagyard'25 muted_shell (pwn, easy)
 date: 2025-08-22
 toc: true
 ---
