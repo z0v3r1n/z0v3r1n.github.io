@@ -70,6 +70,7 @@ Now that we understand how malloc calculates the chunk size, the next question i
 
   * extending the heap with `sbrk`
   * mapping fresh pages with `mmap` for very large allocations.
+* And, if all fails it returns NULL.
 
 ### Large Allocations via `mmap`
 
@@ -80,4 +81,85 @@ One special case is very large allocations. Instead of using the regular heap, g
 
 These chunks bypass the bin system entirely, and when freed, they are returned directly to the kernel with `munmap`.
 
+### Demonstration
 
+Now that we’ve covered the theory, let’s see how this works in practice.
+
+We’ll write a small program that allocates 10 bytes on the heap:
+
+```c
+#include <stdlib.h>
+#include <stdio.h>
+
+int main(int argc, char **argv){
+    void *ptr = malloc(10);
+    printf("malloc(10): %p\n", ptr);
+    getchar(); // keep the process alive for debugging
+    return 0;
+}
+```
+
+Compile and run:
+
+```bash
+$ gcc main.c -o main
+$ ./main
+malloc(10): 0x555d5475e2a0
+```
+
+Here, malloc returned a pointer to the user data region. But let’s peek under the hood using GDB to see what’s really happening.
+Attach to the process:
+
+```bash
+$ gdb -q attach `pidof main`
+```
+
+Using `gef➤ heap chunks`, we can see the chunks that glibc has allocated:
+
+```
+Chunk(addr=0x562bd2ebb010, size=0x290, flags=PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)
+Chunk(addr=0x562bd2ebb2a0, size=0x20, flags=PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)
+Chunk(addr=0x562bd2ebb2c0, size=0x410, flags=PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)
+...
+Chunk(addr=0x562bd2ebbae0, size=0x20530, flags=PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)  ←  top chunk
+```
+
+The chunk of interest is:
+
+```
+Chunk(addr=0x562bd2ebb2a0, size=0x20, flags=PREV_INUSE | IS_MMAPPED | NON_MAIN_ARENA)
+```
+
+Notice how malloc returned the pointer `0x562bd2ebb2a0`, which points to the **user data** portion of the chunk. The actual chunk header is right before it.
+Dumping memory just before our pointer:
+
+```
+gef➤  x/4gx 0x562bd2ebb2a0-16
+0x562bd2ebb290: 0x0000000000000000      0x0000000000000021
+0x562bd2ebb2a0: 0x0000000000000000      0x0000000000000000
+```
+
+The interesting part is `0x21` (the chunk’s `size` field).
+
+* `0x21` in decimal = **33**
+* `0x21` in binary = `100001`
+
+The lowest 3 bits are flags, while the upper bits represent the size.
+
+* `0x20` (binary `100000`) → the real chunk size = **32 bytes**
+* `0x1` → `PREV_INUSE` flag is set
+
+So `0x21 = 0x20 | PREV_INUSE`.
+
+So the final allocated chunk layout looks like this:
+
+```
++------------------+------------------+
+| prev_size (8B)   | size (8B)        |  ← metadata (16 bytes)
++------------------+------------------+
+| user data (10B)  | padding (6B)     |  ← what malloc returned
++------------------+------------------+
+   total = 32 bytes
+```
+
+So, we can conclude through this little demonstration that even though the program only sees a pointer to 10 bytes, malloc actually allocated a **32-byte chunk** with metadata, alignment, and flags baked in.
