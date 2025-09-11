@@ -1,4 +1,4 @@
-> __
+> _An introductory pwn challenge; classic buffer overflow._
 
 ### TL;DR
 
