@@ -1,3 +1,9 @@
+---
+title: "WatCTF 2025 – intro2pwn: Classic Buffer Overflow"
+date: 2025-09-11
+toc: true
+---
+
 > _An introductory pwn challenge; classic buffer overflow._
 
 ### TL;DR
