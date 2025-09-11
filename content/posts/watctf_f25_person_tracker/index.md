@@ -388,6 +388,9 @@ So what changed? With **6 chunks**, the corrupted `next` pointer of the last per
 
 This is a classic case of **heap feng shui**: the exploit was sound, but without the right number of allocations the memory alignment didn’t let me reach my fake struct. A single change — going from 10 chunks to 6 — shifted the layout enough to make everything line up.
 
+You can find the full exploit script [here](https://raw.githubusercontent.com/z0v3r1n/z0v3r1n.github.io/refs/heads/main/content/posts/watctf_f25_person_tracker/exploit.py).
+
+
 ### Conclusion
 
 This challenge showed how a single-byte off-by-one can become powerful. By nulling the LSB of the `next` pointer we redirected the linked list into a fake `Person` under our control, then chained it to the `FLAG`. The tricky part was alignment — the exploit failed with 10 allocations but worked with 6. In the end, one stray `'\0'` was enough to walk the list straight to the flag. A fun reminder that in exploitation, **one byte is all it takes**.
