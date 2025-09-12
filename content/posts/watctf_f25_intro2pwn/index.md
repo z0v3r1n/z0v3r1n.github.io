@@ -169,7 +169,7 @@ The payload would look like this in memory:
 [ Next qword ] = 0x7fff822c7560  (leaked buf addr)
 ```
 
-> I used an extra ret gadget to align the stack else, you'll get a segmentation fault.
+> We are using an extra ret gadget to align the stack because modern versions of libc and syscall conventions expect the stack to be 16-byte aligned before making a call — particularly `execve` inside our shellcode. If you don't align it you might hit a segmentation fault. Since the call instruction that jumped to vuln() pushed a return address (8 bytes), and our ret gadget only adjusts by 8 more, we end up misaligned. Adding an extra ret before jumping into our buffer fixes that — it pops another 8 bytes off the stack, restoring alignment just before shellcode runs. Think of it as a trampoline to make sure the stack doesn’t trip before landing in shellcode.
 
 ### Conclusion
 
