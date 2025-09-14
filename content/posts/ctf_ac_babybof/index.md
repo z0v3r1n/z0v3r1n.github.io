@@ -1,9 +1,10 @@
 ---
 title: "CTF@AC 2025 – babybof: Classic buffer overflow"
-date: 2025-09-11
+date: 2025-09-14
 ---
 
 > *This is your first pwn challenge.*
+
 
 ```bash
 $ file ./challenge | tr ',' '\n'
