@@ -226,5 +226,5 @@ io.interactive()
 
 ![](https://github.com/user-attachments/assets/98e5bc85-b0b8-4da0-8058-988922b34fc1)
 
-You can find the full exploit script [here](https://google.com).
+You can find the full exploit script [here](https://raw.githubusercontent.com/z0v3r1n/z0v3r1n.github.io/main/content/posts/ctf_ac_fini/exploit.py).
 
