@@ -1,6 +1,6 @@
 ---
 title: "FortiD CTF 2025 – protect-the-environment: Abusing getenv() with repeated ROT13"
-date: 2025-13-11
+date: 2025-09-13
 toc: true
 ---
 
