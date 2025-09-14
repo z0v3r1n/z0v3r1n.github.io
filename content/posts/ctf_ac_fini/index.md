@@ -1,7 +1,6 @@
 ---
 title: "CTF@AC 2025 – fini: Hijacking .fini_array for a shell"
 date: 2025-09-14
-toc: true
 ---
 
 > *Hope you can FINIsh this challenge.*
