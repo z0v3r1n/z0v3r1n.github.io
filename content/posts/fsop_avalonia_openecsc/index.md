@@ -1,5 +1,5 @@
 ---
-title: "openECSC – avalonia: intro to file struct exploitation!"
+title: "Introduction to file struct exploitation: openECSC 2025 – avalonia"
 date: 2025-10-15
 toc: true
 ---
