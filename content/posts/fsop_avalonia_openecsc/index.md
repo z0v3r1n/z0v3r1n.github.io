@@ -6,11 +6,11 @@ toc: true
 
 ![](https://github.com/user-attachments/assets/1d984a88-3fd5-419b-aca0-5e64948618d9)
 
-> *From: security@exitnction.ctf
+> *From: security@exitnction.ctf*
 > 
-> To: pwn@exitnction.ctf
+> *To: pwn@exitnction.ctf*
 >
-> Subject: Scheduled Security Test for Mail Application* 
+> *Subject: Scheduled Security Test for Mail Application* 
 >
 > *Date: Tue, 21 September 2025 13:37:00 +0200* 
 >
