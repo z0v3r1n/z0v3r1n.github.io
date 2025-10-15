@@ -7,16 +7,27 @@ toc: true
 ![](https://github.com/user-attachments/assets/1d984a88-3fd5-419b-aca0-5e64948618d9)
 
 > *From: security@exitnction.ctf
+> 
 > To: pwn@exitnction.ctf
+>
 > Subject: Scheduled Security Test for Mail Application* 
+>
 > *Date: Tue, 21 September 2025 13:37:00 +0200* 
+>
 > *MIME-Version: 1.0* 
+>
 > *Content-Type: text/plain; charset="UTF-8"* 
+>
 > *Hello Team,* 
+>
 > *As discussed, we have scheduled a full-scale security test on the mail application currently in use. This particular application has been identified as the same platform exploited during the recent* 
+>
 > *...SNIP...*
+>
 > *window and that no configuration changes are introduced until the testing phase is complete. Let me know if you have any questions or concerns.* 
+>
 > *Best regards,* 
+>
 > *Security Team - Exitnction Limited*
 
 ## TL;DR
