@@ -305,7 +305,11 @@ What we could do is took a look at the limitations we have thus, helping us elim
 
 Let's see! `Full RELRO` is enabled so, we can't perform `got overwrite`. There is a call to `free()` when the program exits! But, in `>= glibc-2.34` the `__malloc_hook` and `__free_hook` are not used so, can't do that either. There are only two options we are left with that are `$rip` overwrite by leaking stack address through `environ` variable and then overwriting the saved address by a `rop chain`. Or, we could perform file struct exploitation by writing a fake file struct to writeable memory and then overwriting `_IO_list_all` to that fake file struct so, when `_IO_flush_all` is called it executes the function pointed by the `vtable` of the file structs and then, using house of cat to do `system('/bin/sh\x00')`. 
 
+Now, I chose to do file struct exploitation because i'm the follower of mantra "reject rop and embrace fsop!".
+
 ---
+
+### What are file structs? `_IO_FILE` & `_IO_FILE_plus`
 
 In order to understand how we file structure exploitation works let's deep dive! Now, what is a file struct? `_IO_FILE` is a structure that is usually returned by functions like `fopen` and used by functions like `fwrite`, `fread` etc. Now, why do we need these file structs? We were doing just fine with `write` and `read` syscall? The purpose of file structs is to the read and write operation faster by using a buffer reduce the number of read and write syscalls.
 
@@ -383,7 +387,9 @@ struct _IO_FILE_plus
 };
 ```
 
-Let's follow what the program does after `exit()` is called. 
+### Why Overwrite a FILE?
+
+In order to answer that question let's follow what the program does after `exit()` is called. 
 
 ```bash
 $ gdb -q ./exitnction 
@@ -491,7 +497,11 @@ Dump of assembler code for function __GI__IO_flush_all:
 ...SNIP...
 ```
 
-So, if we can control the vtable we could redirect execution to a place of our choice! Now, the vtable has to be within the `__io_vtables` region else the program will exit cause of a protection to this kind of attack introduced in glibc-2.24:
+So, if we can control the vtable we could redirect execution to a place of our choice! 
+
+### Stop — There’s a Vtable Gatekeeper
+
+Now, the vtable has to be within the `__io_vtables` region else the program will exit cause of a protection to this kind of attack introduced in `>= glibc-2.24`:
 
 ```c
 #define IO_VTABLES_LEN (IO_VTABLES_NUM * sizeof (struct _IO_jump_t))
@@ -669,6 +679,8 @@ extern const struct _IO_jump_t __io_vtables[] attribute_hidden;
 #define _IO_old_cookie_jumps             (__io_vtables[IO_OLD_COOKIED_JUMPS])
 ```
 
+### `_IO_wfile_seekoff`: House of Cat Saves the Day
+
 So, we have a lot of valid vtables that we can call! This is where the house of cat technique comes into action! There is a vtable `_IO_wfile_seekoff` that calls calls the  `_wide_data->_wide_vtable`. If you don't know what `_wide_data` is it's a struct very similar to `_IO_FILE` but, with a few differences. 
 
 ```c
@@ -762,7 +774,8 @@ So, the function that the `_IO_switch_to_wget_mode` is calling is `__overflow` a
 0x20: __underflow
 ```
 
----
+### Planting the Seed — What, Where & Why?
+
 Now, that we fully understand what file structs are and how we can exploit them using house of cat technique let's move on to the part where we write the exploitation script. The basic concept is that we place a crafted file struct in the `.bss` section and overwrite the `_IO_list_all` to point to the crafted file struct so, when `_IO_flush_all` is called the top of the list is our crafted file struct and exploit get's triggered and we get the shell.
 
 Now this is the file structure that we are gonna be writing to the memory:
@@ -810,9 +823,9 @@ pwndbg> disas _IO_switch_to_wget_mode
    0x00007ffff7c8afdd <+45>:    call   QWORD PTR [rax+0x18]
 ```
 
-Now that we understand exactly what memory layout we need, let's use our write-what-where primitive to construct it piece by piece in the `.bss` section.
+### Now What — PoC Time!
 
-First, we need to know where to build our fake structure and as the `mail_server_info()` function prints the address of `current_license` and the address of `exit()` function we have the leaks needed. We just need to parse them!
+Now that we understand exactly what memory layout we need, let's use our write-what-where primitive to construct it piece by piece in the `.bss` section. First, we need to know where to build our fake structure and as the `mail_server_info()` function prints the address of `current_license` and the address of `exit()` function we have the leaks needed. We just need to parse them!
 
 ```python
 io.recvuntil(b"0x")
@@ -894,7 +907,7 @@ io.sendlineafter(b"> ", b"exit")
 io.interactive()
 ```
 
-The full exploit script is as follows:
+### Field Goal? Nah — Full Touchdown
 
 ```python
 #!/usr/bin/env python3
@@ -952,3 +965,8 @@ $ cat flag.txt
 fakeflag{FAKE_FLAG_4_TESTING}
 ```
 
+## Conclusion
+
+Alright — that’s the ride. I hope this made sense and thanks for reading — hope you enjoyed the teardown.
+
+If anything above looks wrong, sloppy, or just plain cursed — tell me. I'm pretty new to file struct exploitation so corrections, nitpicks, and roasts are welcome. 
