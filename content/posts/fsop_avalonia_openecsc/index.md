@@ -300,6 +300,7 @@ Backend: 2.39-stable (0x7fb435847ba0)
 ## Exploitation
 
 Now what? We have a write what where ... but, no idea what to do with it. :'(
+
 What we could do is took a look at the limitations we have thus, helping us eliminate techinques and then see what we are left with.
 
 Let's see! `Full RELRO` is enabled so, we can't perform `got overwrite`. There is a call to `free()` when the program exits! But, in `>= glibc-2.34` the `__malloc_hook` and `__free_hook` are not used so, can't do that either. There are only two options we are left with that are `$rip` overwrite by leaking stack address through `environ` variable and then overwriting the saved address by a `rop chain`. Or, we could perform file struct exploitation by writing a fake file struct to writeable memory and then overwriting `_IO_list_all` to that fake file struct so, when `_IO_flush_all` is called it executes the function pointed by the `vtable` of the file structs and then, using house of cat to do `system('/bin/sh\x00')`. 
