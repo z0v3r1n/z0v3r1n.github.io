@@ -1,5 +1,5 @@
 ---
-title: "Introduction to file struct exploitation: openECSC 2025 – avalonia"
+title: "Introduction to file struct exploitation: openECSC 2025 – exitnction"
 date: 2025-10-15
 toc: true
 ---
@@ -8,11 +8,11 @@ toc: true
 
 ## TL;DR
 
-Used `_IO_wfile_seekoff` as the vtable entry point for fsop to pivot into `_wide_data->_wide_vtable->__overflow`, bypassing glibc's vtable validation and achieving code execution through house of cat technique.
+Used `_IO_wfile_seekoff` as the vtable entry point for fsop to pivot into `_wide_data->_wide_vtable->__overflow`, bypassing glibc's vtable validation and achieving code execution.
 
 ## Background
 
-Before diving in — quick disclaimer. I’m **not** an FSOP wizard or a heap master or any of that. This was literally my _first proper_ `FILE` structure exploitation challenge. I learned the whole `fsop / house of cat` stuff _just to solve this chall_, so if you spot something off, feel free to message me on discord!
+Before diving in — quick disclaimer. I’m **not** an FSOP wizard or a heap master or any of that. This was literally my _first proper_ `FILE` structure exploitation challenge. I learned the whole `fsop` stuff _just to solve this chall_, so if you spot something off, feel free to message me on discord!
 
 This writeup was made as a submission in best writeup competition for openECSC 2025, and I tried to make it as clean and beginner-readable as possible — explaining every decision I made while debugging. I also mixed in some glibc internals exploration since I wanted to understand what was actually happening rather than just cargo-culting someone else’s PoC.
 
@@ -23,15 +23,15 @@ So yeah — if something looks cursed, it probably is, but it worked :)
 Let's take a look at the files we are given:
 
 ```bash
-$ tar xzvf extinction.tar.gz 
+$ tar xzvf exitnction.tar.gz 
 exitnction/
 exitnction/Dockerfile
 exitnction/docker-compose.yml
 exitnction/flag.txt
 exitnction/exitnction
 
-$ cd extinction
-$ file ./extinction | tr ',' '\n'
+$ cd exitnction
+$ file ./exitnction | tr ',' '\n'
 ./exitnction: ELF 64-bit LSB pie executable
  x86-64
  version 1 (SYSV)
@@ -41,7 +41,7 @@ $ file ./extinction | tr ',' '\n'
  for GNU/Linux 3.2.0
  not stripped
 
-$ pwn checksec ./extinction
+$ pwn checksec ./exitnction
 [*] '/home/kali/exitnction/exitnction'
     Arch:       amd64-64-little
     RELRO:      Full RELRO
@@ -303,7 +303,11 @@ Now what? We have a write what where ... but, no idea what to do with it. :'(
 
 What we could do is took a look at the limitations we have thus, helping us eliminate techinques and then see what we are left with.
 
-Let's see! `Full RELRO` is enabled so, we can't perform `got overwrite`. There is a call to `free()` when the program exits! But, in `>= glibc-2.34` the `__malloc_hook` and `__free_hook` are not used so, can't do that either. There are only two options we are left with that are `$rip` overwrite by leaking stack address through `environ` variable and then overwriting the saved address by a `rop chain`. Or, we could perform file struct exploitation by writing a fake file struct to writeable memory and then overwriting `_IO_list_all` to that fake file struct so, when `_IO_flush_all` is called it executes the function pointed by the `vtable` of the file structs and then, using house of cat to do `system('/bin/sh\x00')`. 
+Let's see! `Full RELRO` is enabled so, we can't perform `got overwrite`. There is a call to `free()` when the program exits! But, in `>= glibc-2.34` the `__malloc_hook` and `__free_hook` are not used so, can't do that either. There are only two options we are left with that are `$rip` overwrite by leaking stack address through `environ` variable and then overwriting the saved address by a `rop chain`. Or, we could perform file struct exploitation by writing a fake file struct to writeable memory and then overwriting `_IO_list_all` to that fake file struct so, when `_IO_flush_all` is called it executes the function pointed by the `vtable` of the file structs and then, using `_IO_wfile_seekoff->_IO_switch_to_wget_mode->__OVERFLOW` chain to do `system('/bin/sh\x00')`. 
+
+> Update:
+> I was talking to someone from pwn.college discord server and he told me that the intended path was to corrupt the exit handlers and thus the name `exit-nction`. And, here I was thinking that it was extinction.
+> https://m101.github.io/binholic/2017/05/20/notes-on-abusing-exit-handlers.html 
 
 Now, I chose to do file struct exploitation because i'm the follower of mantra "reject rop and embrace fsop!".
 
@@ -505,6 +509,7 @@ Now, the vtable has to be within the `__io_vtables` region else the program will
 
 ```c
 #define IO_VTABLES_LEN (IO_VTABLES_NUM * sizeof (struct _IO_jump_t))
+
 ...SNIP...
 
 /* Perform vtable pointer validation.  If validation fails, terminate
@@ -679,9 +684,9 @@ extern const struct _IO_jump_t __io_vtables[] attribute_hidden;
 #define _IO_old_cookie_jumps             (__io_vtables[IO_OLD_COOKIED_JUMPS])
 ```
 
-### `_IO_wfile_seekoff`: House of Cat Saves the Day
+### `_IO_wfile_seekoff` saves the day
 
-So, we have a lot of valid vtables that we can call! This is where the house of cat technique comes into action! There is a vtable `_IO_wfile_seekoff` that calls calls the  `_wide_data->_wide_vtable`. If you don't know what `_wide_data` is it's a struct very similar to `_IO_FILE` but, with a few differences. 
+So, we have a lot of valid vtables that we can call! This is where the `_IO_wfile_seekoff` chain comes into action! `_IO_wfile_seekoff` vtable calls the  `_wide_data->_wide_vtable->__overflow`. If you don't know what `_wide_data` is it's a struct very similar to `_IO_FILE` but, with a few differences. 
 
 ```c
 /* Extra data for wide character streams.  */
@@ -776,7 +781,7 @@ So, the function that the `_IO_switch_to_wget_mode` is calling is `__overflow` a
 
 ### Planting the Seed — What, Where & Why?
 
-Now, that we fully understand what file structs are and how we can exploit them using house of cat technique let's move on to the part where we write the exploitation script. The basic concept is that we place a crafted file struct in the `.bss` section and overwrite the `_IO_list_all` to point to the crafted file struct so, when `_IO_flush_all` is called the top of the list is our crafted file struct and exploit get's triggered and we get the shell.
+Now, that we fully understand what file structs are and how we can exploit them using the `_IO_wfile_seekoff` chain let's move on to the part where we write the exploitation script. The basic concept is that we place a crafted file struct in the `.bss` section and overwrite the `_IO_list_all` to point to the crafted file struct so, when `_IO_flush_all` is called the top of the list is our crafted file struct and exploit get's triggered and we get the shell.
 
 Now this is the file structure that we are gonna be writing to the memory:
 
@@ -968,5 +973,12 @@ fakeflag{FAKE_FLAG_4_TESTING}
 ## Conclusion
 
 Alright — that’s the ride. I hope this made sense and thanks for reading — hope you enjoyed the teardown.
+
+## References
+
+- https://blog.kylebot.net/2022/10/22/angry-FSROP/
+- https://chovid99.github.io/posts/file-structure-attack-part-1/
+- https://elixir.bootlin.com/glibc/glibc-2.39/source
+- https://zenn.dev/rona/articles/5c6f11aabfaf9e
 
 If anything above looks wrong, sloppy, or just plain cursed — tell me. I'm pretty new to file struct exploitation so corrections, nitpicks, and roasts are welcome. 
