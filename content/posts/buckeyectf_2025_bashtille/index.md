@@ -1,6 +1,6 @@
 ---
 title: "Buckeye 2025 – bashtille: escaping chroot jail by exploiting misconfiguration"
-date: 2025-09-14
+date: 2025-11-11
 toc: true
 ---
 
