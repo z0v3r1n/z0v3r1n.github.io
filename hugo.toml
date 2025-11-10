@@ -3,7 +3,7 @@ languageCode = 'en-us'
 defaultContentLanguage = "en-us"
 enableEmoji = true
 title = 'z0v3r1n @br34ktypeshyt'
-params.description = 'Log of me yapping bout what I learned'
+params.description = 'pwn logbook'
 theme = 'hugo-blog-awesome'
 goToTop = true
 
