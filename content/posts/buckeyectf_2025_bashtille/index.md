@@ -149,8 +149,10 @@ func child(dir string) {
 }
 ```
 
-> `chroot` is a syscall on unix that sets the root directory to the directory specified so, you can't access anything binaries included in the directories above the one we are chrooting into creating sort of a container.
+> For those that are not familiar `chroot` is a syscall on unix that sets the root directory to the directory specified so, you can't access anything binaries included in the directories above the one we are chrooting into creating sort of a container.
+> 
 > https://man7.org/linux/man-pages/man2/chroot.2.html
+> 
 > https://en.wikipedia.org/wiki/Chroot
 
 Now, the misconfiguration in this program is that it sets the `ContainerID` to `0` (root on the container).
