@@ -8,7 +8,7 @@ toc: true
 
 > Abused the server misconfiguration in the user-namespace mapping which gave us effective root inside the container to escape chroot by using a exploit that chroots inside the chroot to escape the jail.
 
-We were given the following files:
+We were given following files:
 
 ```
 $ ls -la    
