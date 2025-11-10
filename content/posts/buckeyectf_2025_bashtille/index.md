@@ -211,4 +211,4 @@ io.sendlineafter(b"# ", b"/lib64/ld-linux-x86-64.so.2 ./exploit")
 io.interactive()
 ```
 
-![]([https://github.com/user-attachments/assets/7aaba68c-e660-4fb9-b0ef-2fd63d0a11da](https://github.com/user-attachments/assets/a246ae7b-d5c1-4973-a893-5bb50a1fd9ce))
+![](https://github.com/user-attachments/assets/7aaba68c-e660-4fb9-b0ef-2fd63d0a11da](https://github.com/user-attachments/assets/a246ae7b-d5c1-4973-a893-5bb50a1fd9ce)
