@@ -8,7 +8,8 @@ author: Hugo Authors
 </div>
 
 <br>
-I'm 16 year old wanna-be vuln researcher tinkering with kernel/browsers these days. CTFs with my team capablanca in free time and, 
+I'm 16 year old wanna-be vulnerability researcher tinkering with kernel/browsers these days and play ctfs with my team capablanca in free time. I made this blog to write about topics/ctf challenges that interest me.
+
 
 ```
 14th: BuckeyeCTF 2025
