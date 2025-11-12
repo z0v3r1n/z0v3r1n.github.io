@@ -8,9 +8,10 @@ author: Hugo Authors
 </div>
 
 <br>
-Wanna-be vulnerability researcher and pwn player for capablanca ...
 
 ```
+wanna be vulnerability researcher ... playing ctfs in my free time with capablanca
+
 14th: BuckeyeCTF 2025
 7th:  V1t CTF 2025
 7th:  Deadface CTF 2025
