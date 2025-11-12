@@ -1,5 +1,5 @@
 ---
-title: "WatCTF 2025 – intro2pwn: Classic Buffer Overflow"
+title: "WatCTF 2025 – pwn/intro2pwn: Classic Buffer Overflow"
 date: 2025-09-11
 toc: true
 ---
