@@ -182,6 +182,11 @@ int main(void)
 }
 ```
 
+```
+$ gcc exploit.c -o exploit
+$ strip exploit
+```
+
 The biggest problem here is the question of how do we get the binary on the server? The answer to that is we can use `printf` which supports taking taking in hex string and writing it to a file.
 
 ```
