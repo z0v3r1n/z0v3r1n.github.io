@@ -1,5 +1,5 @@
 ---
-title: "WatCTF 2025 – person-tracker: One Byte to Rule Them All"
+title: "WatCTF 2025 – pwn/person-tracker: One Byte to Rule Them All"
 date: 2025-09-11
 toc: true
 ---
