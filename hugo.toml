@@ -2,8 +2,7 @@ baseURL = 'https://z0v3r1n.github.io/'
 languageCode = 'en-us'
 defaultContentLanguage = "en-us"
 enableEmoji = true
-title = 'z0v3r1n @pwner'
-params.description = 'pwn logbook'
+title = "z0v3r1n's blog"
 theme = 'hugo-blog-awesome'
 goToTop = true
 
@@ -39,7 +38,7 @@ weight = 30
 [Languages.en-us.params]
 sitename = ""
 defaultColor = "dark"
-description = "offensive security research"
+description = "pwner for @capablanca"
 mainSections = ['posts']
 goToTop = true
 dateFormat = ""
@@ -47,8 +46,8 @@ rssFeedDescription = "summary"
 
 [Languages.en-us.params.author]
 #avatar = "avatar.jpg"                       # /assets/avatar.jpg
-intro = "z0v3r1n's logbook"
-description = "offensive security research"
+intro = "z0v3r1n's blog"
+description = "pwner for @capablanca"
 name = ""
 
 [[params.socialIcons]]
