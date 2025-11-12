@@ -1,5 +1,5 @@
 ---
-title: "CTF@AC 2025 – babybof: Classic buffer overflow"
+title: "CTF@AC 2025 – pwn/babybof: Classic buffer overflow"
 date: 2025-09-14
 ---
 
