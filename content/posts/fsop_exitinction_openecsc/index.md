@@ -1,5 +1,5 @@
 ---
-title: "Introduction to file struct exploitation: openECSC 2025 – exitnction"
+title: "Introduction to file struct exploitation: openECSC 2025 – pwn/exitnction"
 date: 2025-10-15
 toc: true
 ---
