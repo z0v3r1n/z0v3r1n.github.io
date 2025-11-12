@@ -6,6 +6,8 @@ toc: true
 
 ![](https://github.com/user-attachments/assets/1d984a88-3fd5-419b-aca0-5e64948618d9)
 
+> `this blog needs to be checked ... im certain there are mistakes ... so, look out! will update it when i get time .. `
+
 ## TL;DR
 
 Used `_IO_wfile_seekoff` as the vtable entry point for fsop to pivot into `_wide_data->_wide_vtable->__overflow`, bypassing glibc's vtable validation and achieving code execution.
