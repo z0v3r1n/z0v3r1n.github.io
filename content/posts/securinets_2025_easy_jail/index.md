@@ -1,6 +1,6 @@
 ---
 title: "Securinets Quals 2025 – misc/easy-jail: pyjail"
-date: 2025-10-4
+date: 2025-10-04
 toc: true
 ---
 
