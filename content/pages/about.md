@@ -8,11 +8,17 @@ author: Hugo Authors
 </div>
 
 <br>
-16 yo (wanna be vuln researcher) tinkering with kernel/browsers these days and, playing ctfs with my team capablanca.
+I'm 16 year old wanna-be vuln researcher tinkering with kernel/browsers these days. CTFs with my team capablanca in free time and, 
+
+```
+14th: BuckeyeCTF 2025
+7th:  V1t CTF 2025
+7th:  Deadface CTF 2025
+6th:  WatCTF F25
+19th: Iran Tech Olympics CTF 2025
+```
 
 * Discord: z0v3r1n
 * Email: zoverin@proton.me
 * [GitHub](https://github.com/z0v3r1n)
 * [Twitter](https://twitter.com/z0v3r1n)
-* [LinkedIn](https://www.linkedin.com/in/z0v3r1n/)
-* [Instagram](https://www.instagram.com/z0v3r1n)
