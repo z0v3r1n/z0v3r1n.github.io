@@ -8,20 +8,7 @@ author: Hugo Authors
 </div>
 
 <br>
-Offensive security researcher. I h3ck things for fun and learn full-time.
-
-### Bio Data
-
-* 16 year old
-* March 17, 2009
-* Islamabad, Pakistan
-
-### Achievements
-
-* Founder of PentSec
-* Ranked 20th in Pakistan on HTB
-
-### Contacts
+16 yo (wanna be vuln researcher) tinkering with kernel/browsers these days and, playing ctfs with my team capablanca.
 
 * Discord: z0v3r1n
 * Email: zoverin@proton.me
