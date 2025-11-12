@@ -1,5 +1,5 @@
 ---
-title: "WatCTF F25 – Hex Editor Xtended v2: Bypassing Path Checks via /proc/self/mem"
+title: "WatCTF F25 – pwn/Hex Editor Xtended v2: Bypassing Path Checks via /proc/self/mem"
 date: 2025-09-11
 toc: true
 ---
