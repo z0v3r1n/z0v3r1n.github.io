@@ -1,5 +1,5 @@
 ---
-title: "Buckeye 2025 – bashtille: escaping chroot jail by exploiting misconfiguration"
+title: "Buckeye 2025 – pwn/bashtille: escaping chroot jail by exploiting misconfiguration"
 date: 2025-11-10
 toc: true
 ---
