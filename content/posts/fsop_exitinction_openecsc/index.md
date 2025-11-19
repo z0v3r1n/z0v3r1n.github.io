@@ -6,8 +6,6 @@ toc: true
 
 ![](https://github.com/user-attachments/assets/1d984a88-3fd5-419b-aca0-5e64948618d9)
 
-> `this blog needs to be checked ... im certain there are mistakes ... so, look out! will update it when i get time .. `
-
 ## TL;DR
 
 Used `_IO_wfile_seekoff` as the vtable entry point for fsop to pivot into `_wide_data->_wide_vtable->__overflow`, bypassing glibc's vtable validation and achieving code execution.
@@ -303,21 +301,21 @@ Backend: 2.39-stable (0x7fb435847ba0)
 
 Now what? We have a write what where ... but, no idea what to do with it. :'(
 
-What we could do is took a look at the limitations we have thus, helping us eliminate techinques and then see what we are left with.
+What we could do is take a look at the limitations we have thus, helping us eliminate techinques that are not do-able and then see what we are left with.
 
-Let's see! `Full RELRO` is enabled so, we can't perform `got overwrite`. There is a call to `free()` when the program exits! But, in `>= glibc-2.34` the `__malloc_hook` and `__free_hook` are not used so, can't do that either. There are only two options we are left with that are `$rip` overwrite by leaking stack address through `environ` variable and then overwriting the saved address by a `rop chain`. Or, we could perform file struct exploitation by writing a fake file struct to writeable memory and then overwriting `_IO_list_all` to that fake file struct so, when `_IO_flush_all` is called it executes the function pointed by the `vtable` of the file structs and then, using `_IO_wfile_seekoff->_IO_switch_to_wget_mode->__OVERFLOW` chain to do `system('/bin/sh\x00')`. 
+Let's see! `Full RELRO` is enabled so, we can't perform `got overwrite`. There is a call to `free()` when the program exits! But, in `>= glibc-2.34` the `__malloc_hook` and `__free_hook` are not used so, can't overwrite the hooks to get shell either. There are only two options we are left with that are `ret2system` by leaking stack address through `environ` variable and then overwriting the saved address. Or, we could perform file struct exploitation by writing a fake file struct to writeable memory and then overwriting `_IO_list_all` to that fake file struct so, when `_IO_flush_all` is called it calls the vtable which we have corrupted so, it does `_IO_wfile_seekoff->_IO_switch_to_wget_mode->__OVERFLOW` chain to do `system('/bin/sh\x00')`. 
 
 > Update:
 > I was talking to someone from pwn.college discord server and he told me that the intended path was to corrupt the exit handlers and thus the name `exit-nction`. And, here I was thinking that it was extinction.
 > https://m101.github.io/binholic/2017/05/20/notes-on-abusing-exit-handlers.html 
 
-Now, I chose to do file struct exploitation because i'm the follower of mantra "reject rop and embrace fsop!".
+Now, I chose to do file struct exploitation because i'm the follower of the mantra "reject rop and embrace fsop!".
 
 ---
 
 ### What are file structs? `_IO_FILE` & `_IO_FILE_plus`
 
-In order to understand how we file structure exploitation works let's deep dive! Now, what is a file struct? `_IO_FILE` is a structure that is usually returned by functions like `fopen` and used by functions like `fwrite`, `fread` etc. Now, why do we need these file structs? We were doing just fine with `write` and `read` syscall? The purpose of file structs is to the read and write operation faster by using a buffer reduce the number of read and write syscalls.
+In order to understand how we can do file structure exploitation works let's deep dive! Now, what is a file struct? `_IO_FILE` is a structure that is usually returned by functions like `fopen` and used by functions like `fwrite`, `fread` etc. Now, why do we need these file structs? We were doing just fine with `write` and `read` syscall? The purpose of file structs is to the read and write operation faster by using a buffer reduce the number of read and write syscalls.
 
 ```c
 /* The tag name of this struct is _IO_FILE to preserve historic
@@ -488,7 +486,7 @@ _IO_flush_all (void)
 libc_hidden_def (_IO_flush_all)
 ```
 
-> `_IO_list_all` is the head of the linked list which is maintained by glibc of open file structs! `_IO_list_all` by default points to `stderr` file struct.
+> `_IO_list_all` is the head of the linked list of open file structs! `_IO_list_all` by default points to `stderr` file struct.
 > `struct _IO_FILE_plus *_IO_list_all = &_IO_2_1_stderr_;`
 
 `_IO_flush_all` moves the file struct's vtable to `rax` and then, dereferences `rax+0x18`.
@@ -688,7 +686,7 @@ extern const struct _IO_jump_t __io_vtables[] attribute_hidden;
 
 ### `_IO_wfile_seekoff` saves the day
 
-So, we have a lot of valid vtables that we can call! This is where the `_IO_wfile_seekoff` chain comes into action! `_IO_wfile_seekoff` vtable calls the  `_wide_data->_wide_vtable->__overflow`. If you don't know what `_wide_data` is it's a struct very similar to `_IO_FILE` but, with a few differences. 
+So, we have a lot of valid vtables that we can call! This is where the `_IO_wfile_seekoff` chain comes into action! `_IO_wfile_seekoff` vtable calls `_IO_switch_to_wget_mode` which executes  `_wide_data->_wide_vtable->__overflow`. If you don't know what `_wide_data` is it's a struct very similar to `_IO_FILE` but, with a few differences. 
 
 ```c
 /* Extra data for wide character streams.  */
@@ -727,7 +725,7 @@ pwndbg> disas _IO_wfile_seekoff
    0x00007ffff7c8d2e8 <+104>:   call   0x7ffff7c8afb0 <__GI__IO_switch_to_wget_mode>
 ```
 
-`_IO_switch_to_wget_mode` loads our fake FILE's `_wide_data` pointer into `rax`, then dereferences `rax+0xe0` to get the `_wide_vtable` address, and finally calls the function pointer at `_wide_vtable+0x18`. 
+`_IO_switch_to_wget_mode` loads our fake FILE's `_wide_data` pointer into `rax`, then dereferences `rax+0xe0` to get the `_wide_vtable` address, and finally calls the function pointer at `_wide_vtable+0x18` (`__overflow`). 
 
 ```bash
 pwndbg> disas _IO_switch_to_wget_mode
@@ -792,7 +790,7 @@ fs[0x00] = "/bin/sh"                    ; _flags
 fs[0x18] = system                       ; _IO_read_base
 fs[0x88] = _IO_stdfile_2_lock           ; _lock
 fs[0xa0] = _wide_data ptr               ; fp-0x20
-fs[0xd0] = ptr to fake file             ; fp
+fs[0xc0] = ptr to fake file             ; fp
 fs[0xd8] = vtable                       ; (_IO_wfile_jumps+0x48)-0x18
 
 > the rest of the contents are set to 0x00
@@ -975,6 +973,7 @@ fakeflag{FAKE_FLAG_4_TESTING}
 ## Conclusion
 
 Alright — that’s the ride. I hope this made sense and thanks for reading — hope you enjoyed the teardown.
+If anything above looks wrong, sloppy, or just plain cursed — tell me. I'm pretty new to file struct exploitation so corrections, nitpicks, and roasts are welcome. 
 
 ## References
 
@@ -983,4 +982,3 @@ Alright — that’s the ride. I hope this made sense and thanks for reading —
 - https://elixir.bootlin.com/glibc/glibc-2.39/source
 - https://zenn.dev/rona/articles/5c6f11aabfaf9e
 
-If anything above looks wrong, sloppy, or just plain cursed — tell me. I'm pretty new to file struct exploitation so corrections, nitpicks, and roasts are welcome. 
